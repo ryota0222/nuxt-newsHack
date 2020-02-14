@@ -30,7 +30,8 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  // plugins: ["@plugins/vuetify"],
+  plugins: [{ src: "@plugins/vuetify", ssr: false }],
   /*
    ** Nuxt.js dev-modules
    */
@@ -52,7 +53,8 @@ module.exports = {
           primary: "#3f51b5",
           secondary: "#b0bec5",
           accent: "#8c9eff",
-          error: "#b71c1c"
+          error: "#b71c1c",
+          header: colors.grey.darken3
         },
         dark: {
           primary: colors.blue.darken2,
@@ -61,7 +63,8 @@ module.exports = {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          success: colors.green.accent3,
+          header: colors.grey.darken3
         }
       }
     }

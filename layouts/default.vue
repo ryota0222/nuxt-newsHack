@@ -1,8 +1,10 @@
 <template>
   <v-app>
-    <v-app-bar color="accent" dense dark class="header-sticky">
+    <v-app-bar color="header" dense dark class="header-sticky">
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title>Hacker News Clone</v-toolbar-title>
+      <v-toolbar-title class="font-weight-black">
+        <span style="color: red">H</span>acker News Clone
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
