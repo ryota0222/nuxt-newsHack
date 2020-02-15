@@ -5,16 +5,11 @@
       <v-card-title>{{getNewsContent.title}}</v-card-title>
       <v-card-subtitle class="py-1">掲載時刻: {{getNewsContent.time | formatDate}}</v-card-subtitle>
       <v-card-subtitle class="py-1">記事ID: {{getNewsContent.id}}</v-card-subtitle>
-      <!-- <v-card-subtitle class="py-1">
-        著者:
-        <nuxt-link :to="{name:'user-id',params:{id:getNewsContent.by}}">{{getNewsContent.by}}</nuxt-link>
-      </v-card-subtitle>-->
       <v-card-subtitle class="py-1 d-flex align-center">
         <span class="mr-1">著者:</span>
         <v-btn
-          :to="{name:'user-id',params:{id:getNewsContent.by}}"
+          @click="toUserPostList(getNewsContent.by)"
           text
-          link
           color="link"
           min-height="20"
           class="x-small post-link align-center d-flex"
@@ -24,7 +19,7 @@
       </v-card-subtitle>
       <v-card-subtitle class="py-1">ジャンル: {{getNewsContent.type}}</v-card-subtitle>
       <v-card-text class="py-1">テキスト: {{getNewsContent.text || "no-text"}}</v-card-text>
-      <v-card-text class="py-1">コメント数: {{getNewsContent.descendants || "no-descendants"}}</v-card-text>
+      <v-card-text class="py-1">コメント数: {{getNewsContent.descendants || "0"}}</v-card-text>
       <v-card-text class="py-1">スコア: {{getNewsContent.score || "no-score"}}</v-card-text>
 
       <!-- <v-card-text class="pb-3 pt-1">
@@ -32,10 +27,9 @@
         <a v-if="getNewsContent.url" :href="getNewsContent.url">{{getNewsContent.url}}</a>
         <span v-else>no link</span>
       </v-card-text>-->
-      <v-card-text class="pb-3 pt-1 d-flex align-center">
+      <v-card-text class="pb-3 pt-1 d-flex align-center" v-if="getNewsContent.url">
         <span class="mr-1">リンク:</span>
         <v-btn
-          v-if="getNewsContent.url"
           :href="getNewsContent.url"
           text
           link
@@ -46,7 +40,6 @@
         >
           <span class="text-left">{{getNewsContent.url}}</span>
         </v-btn>
-        <span v-else>no-link</span>
       </v-card-text>
     </v-card>
     <v-btn @click="goBackList" color="primary" fixed right bottom class="mb-4 mr-4">一覧に戻る</v-btn>
@@ -63,7 +56,12 @@ export default {
   },
   methods: {
     goBackList() {
-      this.$router.push("/");
+      this.$router.go(-1);
+    },
+    toUserPostList(link) {
+      this.$store.commit("news/clearNewsContentList");
+      this.$store.commit("resetPageNo");
+      this.$router.push({ name: "user-id", params: { id: link } });
     }
   },
   filters: {

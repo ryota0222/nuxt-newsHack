@@ -2,47 +2,61 @@ export const state = () => ({
   // common
   category: [
     {
+      id: 0,
       name: "NEW",
       link: "/",
       api: "https://hacker-news.firebaseio.com/v0/newstories.json"
     },
     {
+      id: 1,
       name: "TOP",
       link: "/top",
       api: "https://hacker-news.firebaseio.com/v0/topstories.json"
     },
     {
+      id: 2,
       name: "BEST",
       link: "/best",
       api: "https://hacker-news.firebaseio.com/v0/beststories.json"
     },
     {
+      id: 3,
+      name: "Ask, Show and Job Stories",
+      link: "/otherStories/ask",
+      api: ""
+
+    }
+  ],
+  otherStoriesCategory: [
+    {
+      id: 0,
       name: "ASK",
-      link: "/ask",
+      link: "/otherStories/ask",
       api: "https://hacker-news.firebaseio.com/v0/askstories.json"
     },
     {
+      id: 1,
       name: "SHOW",
-      link: "/show",
+      link: "/otherStories/show",
       api: "https://hacker-news.firebaseio.com/v0/showstories.json"
     },
     {
+      id: 2,
       name: "JOB",
-      link: "/job",
+      link: "/otherStories/job",
       api: "https://hacker-news.firebaseio.com/v0/jobstories.json"
     }
   ],
-  // 最新記事一覧
-
-  // 記事詳細
-
-  // ユーザー別記事一覧
+  postNumberPerPage: 20,
+  selectedApiInfo: Object,
+  // 種別ごと記事一覧
   newsIdList: [],
   newsContentList: [],
   newsContent: Object,
+  // ユーザー別記事一覧
   userPostInfo: Object,
   userPostIdList: [],
-  postNumberPerPage: 20
+  maxNumberToGet: 100
 });
 
 export const getters = {
@@ -50,14 +64,16 @@ export const getters = {
   getNewsContentList: state => state.newsContentList,
   getNewsContent: state => state.newsContent,
   getUserPostInfo: state => state.userPostInfo,
+  getUserPostIdList: state => state.userPostIdList,
   getPostNumberPerPage: state => state.postNumberPerPage,
-  getCategory: state => state.category
+  getCategory: state => state.category,
+  getOtherStoriesCategory: state => state.otherStoriesCategory
 };
 export const mutations = {
   setNewsIdList(state, list) {
     state.newsIdList = list;
   },
-  setNewsContentList(state, list) {
+  setContentList(state, list) {
     state.newsContentList = list;
   },
   setNewsContent(state, id) {
@@ -71,38 +87,77 @@ export const mutations = {
   },
   setUserPostInfo(state, data) {
     state.userPostInfo = data;
-    // console.log(data.submitted[0]);
   },
-  setUserPostIdList(state, data) {
-    state.userPostIdList = data;
+  setUserPostIdList(state, list) {
+    state.userPostIdList = list;
+  },
+  filterPostTypeApi(state, type) {
+    let selectedApiInfo = state.category.filter(list =>
+      list.name === type
+    )[0];
+    if (undefined === selectedApiInfo) {
+      selectedApiInfo = state.otherStoriesCategory.filter(list =>
+        list.name === type
+      )[0];
+    }
+    // console.log("selectedApiInfo: ", selectedApiInfo.api)
+    state.selectedApiInfo = selectedApiInfo
   }
 };
 
 export const actions = {
-  async fetchNewsId({ dispatch, commit, state }, url) {
-    const newsId = await this.$axios.$get(url);
-    const shapedList = await dispatch("cutList", {
-      list: newsId,
-      sliceNumber: state.postNumberPerPage
-    });
-    commit("setNewsIdList", shapedList);
+  // ニュース情報を取得する
+  async fetchContentFromAPI({ dispatch, commit, state }, type) {
+    // typeと合ったURLを取得
+    commit("filterPostTypeApi", type)
+    // IDの取得
+    const idList = await dispatch("fetchIdFromAPI", state.selectedApiInfo.api);
+    // console.log("idList: ", idList);
+    // 1ページに表示する数に分け、
+    // 最初のページに表示するIDはコンテンツも取得する
+    const sliceIdList = await dispatch("sliceIdList", idList);
+    // console.log("slice: ", sliceIdList)
+    commit("setNewsIdList", sliceIdList);
   },
-  async fetchNewsContent({ dispatch, commit }, url) {
-    const newsContent = await this.$axios.$get(url);
-    return newsContent;
-  },
-  async cutList({ dispatch, commit }, payload) {
-    const originalList = payload.list;
-    const repeatNum = Math.ceil(payload.list.length / payload.sliceNumber);
-    let shapedList = [];
-    for (var i = 0; i < repeatNum; i++) {
-      const tempList = originalList.splice(0, payload.sliceNumber);
-      if (i === 0) await dispatch("fetchContentsFromId", tempList);
-      shapedList.push(tempList);
+  // ユーザー別のニュース情報を取得する
+  async fetchUserPosting({ dispatch, commit, state }, url) {
+    // ユーザー情報の取得
+    const userPostInfo = await dispatch("fetchIdFromAPI", url);
+    commit("setUserPostInfo", userPostInfo);
+    // IDの取得
+    const userPostIdList = userPostInfo.submitted;
+    const tempSubmitted = userPostIdList.slice();
+    let shapedSubmitted = tempSubmitted.slice();
+    // 取得上限数まで取得する
+    if (tempSubmitted.length > state.maxNumberToGet) {
+      shapedSubmitted = tempSubmitted.splice(0, state.maxNumberToGet);
     }
-    return shapedList;
+    const shapedList = await dispatch("sliceIdList", shapedSubmitted);
+    commit("setUserPostIdList", shapedList);
   },
-  async fetchContentsFromId({ dispatch, commit }, idList) {
+  // IDを取得する
+  async fetchIdFromAPI({ dispatch, commit, state }, url) {
+    // console.log(state.selectedApiInfo.api);
+    return await this.$axios.$get(url);
+  },
+  async fetchNewsContentFromAPI({ dispatch, commit }, url) {
+    return await this.$axios.$get(url);
+  },
+  // 1ページに表示する数に分ける
+  async sliceIdList({ dispatch, commit, state }, list) {
+    // console.log(list)
+    const originalList = list;
+    const repeatNum = Math.ceil(list.length / state.postNumberPerPage);
+    let sliceIdList = [];
+    for (var i = 0; i < repeatNum; i++) {
+      const tempList = originalList.splice(0, state.postNumberPerPage);
+      // 1ページ目のIDのみ、コンテンツを取得する
+      if (i === 0) await dispatch("fetchContentsFromId", tempList);
+      sliceIdList.push(tempList);
+    }
+    return sliceIdList;
+  },
+  async fetchContentsFromId({ dispatch, commit, state }, idList) {
     // newsContentListの中身を空にする
     commit("clearNewsContentList");
     var newsContentList = [];
@@ -111,28 +166,11 @@ export const actions = {
         "https://hacker-news.firebaseio.com/v0/item/" +
         idList[i] +
         ".json?print=pretty";
-      const newsContent = await dispatch("fetchNewsContent", url);
-      // console.log("newsContent: ", newsContent);
+      const newsContent = await dispatch("fetchNewsContentFromAPI", url);
+      // 取得できなかったコンテンツは無視する
       if (newsContent !== null) newsContentList.push(newsContent);
     }
-    // console.log(newsContentList[18]);
-    commit("setNewsContentList", newsContentList);
+    commit("setContentList", newsContentList);
     // console.log(state.newsContentList[0]);
-  },
-  async fetchUserPosting({ dispatch, commit, state }, url) {
-    const userPostInfo = await this.$axios.$get(url);
-    const tempSubmitted = userPostInfo.submitted.slice();
-    let shapedSubmitted = tempSubmitted.slice();
-    commit("setUserPostInfo", userPostInfo);
-
-    console.log("temp:: ", tempSubmitted.length);
-    if (tempSubmitted.length > 100) {
-      shapedSubmitted = tempSubmitted.splice(0, 100);
-    }
-    const shapedList = await dispatch("cutList", {
-      list: shapedSubmitted,
-      sliceNumber: state.postNumberPerPage
-    });
-    commit("setUserPostIdList", shapedList);
   }
 };

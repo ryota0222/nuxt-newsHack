@@ -4,7 +4,7 @@
       <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
       <v-toolbar-title
         class="font-weight-black title-color"
-        :class="{titleDarkColor: darkMode === true}"
+        :class="{titleDarkColor: this.$vuetify.theme.dark === true}"
       >
         <span style="color: #ff4d61">H</span>acker News Clone
       </v-toolbar-title>
@@ -26,7 +26,7 @@
         </template>
         <v-list>
           <v-list-item-group color="primary">
-            <v-list-item v-for="(category, i) in getCategory" :key="i" class="pa-0">
+            <v-list-item v-for="category in getCategory" :key="category.index">
               <v-btn
                 @click="linkToPage(category.link)"
                 text
@@ -36,6 +36,17 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
+      <template v-slot:extension>
+        <v-tabs align-with-title slider-color="yellow" right>
+          <v-tab v-for="category in getOtherStoriesCategory" :key="category.index" class="pa-0">
+            <v-btn
+              @click="linkToPage(category.link)"
+              text
+              class="text-center menu-link"
+            >{{category.name}}</v-btn>
+          </v-tab>
+        </v-tabs>
+      </template>
     </v-app-bar>
     <nuxt />
   </v-app>
@@ -56,7 +67,7 @@ export default {
     LightModeSvg
   },
   computed: {
-    ...mapGetters("news", ["getCategory"])
+    ...mapGetters("news", ["getCategory", "getOtherStoriesCategory"])
   },
   methods: {
     changeTheme() {
@@ -87,7 +98,7 @@ export default {
   color: black;
 }
 .titleDarkColor {
-  color: white !important;
+  color: white;
 }
 .menu-link {
   display: inline-block;
