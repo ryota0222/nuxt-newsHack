@@ -50,22 +50,16 @@ module.exports = {
       dark: false,
       themes: {
         light: {
-          primary: "#3f51b5",
-          secondary: "#b0bec5",
-          accent: "#8c9eff",
-          error: "#b71c1c",
-          header: colors.grey.darken3
+          header: "#51bdc7",
+          link: "#1976d2"
         },
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3,
-          header: colors.grey.darken3
+          header: colors.grey.darken3,
+          link: "#91ceff"
         }
+      },
+      options: {
+        customProperties: true
       }
     }
   },

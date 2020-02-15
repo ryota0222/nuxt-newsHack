@@ -1,4 +1,42 @@
 export const state = () => ({
+  // common
+  category: [
+    {
+      name: "NEW",
+      link: "/",
+      api: "https://hacker-news.firebaseio.com/v0/newstories.json"
+    },
+    {
+      name: "TOP",
+      link: "/top",
+      api: "https://hacker-news.firebaseio.com/v0/topstories.json"
+    },
+    {
+      name: "BEST",
+      link: "/best",
+      api: "https://hacker-news.firebaseio.com/v0/beststories.json"
+    },
+    {
+      name: "ASK",
+      link: "/ask",
+      api: "https://hacker-news.firebaseio.com/v0/askstories.json"
+    },
+    {
+      name: "SHOW",
+      link: "/show",
+      api: "https://hacker-news.firebaseio.com/v0/showstories.json"
+    },
+    {
+      name: "JOB",
+      link: "/job",
+      api: "https://hacker-news.firebaseio.com/v0/jobstories.json"
+    }
+  ],
+  // 最新記事一覧
+
+  // 記事詳細
+
+  // ユーザー別記事一覧
   newsIdList: [],
   newsContentList: [],
   newsContent: Object,
@@ -12,7 +50,8 @@ export const getters = {
   getNewsContentList: state => state.newsContentList,
   getNewsContent: state => state.newsContent,
   getUserPostInfo: state => state.userPostInfo,
-  getPostNumberPerPage: state => state.postNumberPerPage
+  getPostNumberPerPage: state => state.postNumberPerPage,
+  getCategory: state => state.category
 };
 export const mutations = {
   setNewsIdList(state, list) {
@@ -74,7 +113,7 @@ export const actions = {
         ".json?print=pretty";
       const newsContent = await dispatch("fetchNewsContent", url);
       // console.log("newsContent: ", newsContent);
-      newsContentList.push(newsContent);
+      if (newsContent !== null) newsContentList.push(newsContent);
     }
     // console.log(newsContentList[18]);
     commit("setNewsContentList", newsContentList);

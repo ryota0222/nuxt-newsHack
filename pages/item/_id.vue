@@ -5,15 +5,48 @@
       <v-card-title>{{getNewsContent.title}}</v-card-title>
       <v-card-subtitle class="py-1">掲載時刻: {{getNewsContent.time | formatDate}}</v-card-subtitle>
       <v-card-subtitle class="py-1">記事ID: {{getNewsContent.id}}</v-card-subtitle>
-      <v-card-subtitle class="py-1">
+      <!-- <v-card-subtitle class="py-1">
         著者:
         <nuxt-link :to="{name:'user-id',params:{id:getNewsContent.by}}">{{getNewsContent.by}}</nuxt-link>
+      </v-card-subtitle>-->
+      <v-card-subtitle class="py-1 d-flex align-center">
+        <span class="mr-1">著者:</span>
+        <v-btn
+          :to="{name:'user-id',params:{id:getNewsContent.by}}"
+          text
+          link
+          color="link"
+          min-height="20"
+          class="x-small post-link align-center d-flex"
+        >
+          <span class="text-left">{{getNewsContent.by}}</span>
+        </v-btn>
       </v-card-subtitle>
       <v-card-subtitle class="py-1">ジャンル: {{getNewsContent.type}}</v-card-subtitle>
-      <v-card-text>
+      <v-card-text class="py-1">テキスト: {{getNewsContent.text || "no-text"}}</v-card-text>
+      <v-card-text class="py-1">コメント数: {{getNewsContent.descendants || "no-descendants"}}</v-card-text>
+      <v-card-text class="py-1">スコア: {{getNewsContent.score || "no-score"}}</v-card-text>
+
+      <!-- <v-card-text class="pb-3 pt-1">
         リンク:
         <a v-if="getNewsContent.url" :href="getNewsContent.url">{{getNewsContent.url}}</a>
         <span v-else>no link</span>
+      </v-card-text>-->
+      <v-card-text class="pb-3 pt-1 d-flex align-center">
+        <span class="mr-1">リンク:</span>
+        <v-btn
+          v-if="getNewsContent.url"
+          :href="getNewsContent.url"
+          text
+          link
+          color="link"
+          min-height="20"
+          class="x-small post-link align-center d-flex"
+          style="max-width: calc(100% - 50px);"
+        >
+          <span class="text-left">{{getNewsContent.url}}</span>
+        </v-btn>
+        <span v-else>no-link</span>
       </v-card-text>
     </v-card>
     <v-btn @click="goBackList" color="primary" fixed right bottom class="mb-4 mr-4">一覧に戻る</v-btn>
