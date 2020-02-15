@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="mb-6 ml-4">最新記事一覧</h1>
+    <h1 class="my-6 ml-4">最新記事一覧</h1>
     <!-- ローディング中 -->
     <div class="text-center d-flex flex-wrap" v-if="getNewsContentList.length === 0">
       <template v-for="(contents, i) in getPostNumberPerPage" link>
@@ -34,7 +34,7 @@
                     text
                     color="link"
                     min-height="20"
-                    class="x-small post-link d-flex align-center py-1 px-2"
+                    class="x-small post-link align-center py-1 px-2"
                   >
                     <span class="text-left">{{contents.url}}</span>
                   </v-btn>
@@ -48,56 +48,28 @@
       <v-pagination v-model="page" class="my-4" :length="getNewsIdList.length" total-visible="10"></v-pagination>
     </div>
     <!-- ページ最下部に移動するボタン -->
-    <v-fab-transition>
-      <v-btn
-        fixed
-        dark
-        fab
-        bottom
-        right
-        color="pink"
-        v-show="position < pageHeight-windowHeight"
-        @click="scrollToBottom"
-      >
-        <v-icon color="white">mdi-chevron-down</v-icon>
-      </v-btn>
-    </v-fab-transition>
+    <page-scroll-button></page-scroll-button>
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import jQuery from "jquery";
-let $ = jQuery;
-// API
-// 一覧のIDを取得する
-const latest_news_id_url =
-  "https://hacker-news.firebaseio.com/v0/newstories.json";
+import PageScrollButton from "~/components/PageScrollButton";
 export default {
+  components: {
+    PageScrollButton
+  },
   data() {
     return {
-      page: 1,
-      position: 0,
-      pageHeight: Number,
-      windowHeight: Number
+      page: 1
     };
   },
   created() {
     // ページを離れる前のページネーションを取得
     this.page = this.getPageNo;
-    if (this.getNewsIdList.length === 0) {
-      this.$store.dispatch("news/fetchNewsId", latest_news_id_url);
+    if (this.getNewsContentList.length === 0) {
+      this.$store.dispatch("news/fetchContentFromAPI", "NEW");
     }
-  },
-  mounted() {
-    // ブラウザ内の表示域取得
-    this.setWindowHeight();
-    // ページ全体の高さ取得
-    this.setDocumentHeight();
-    // スクロールを監視
-    window.addEventListener("scroll", this.handleScroll);
-    // console.log("pageHeight: ", this.pageHeight);
-    // console.log("windowHeight: ", this.windowHeight);
   },
   computed: {
     ...mapGetters(["getPageNo"]),
@@ -110,14 +82,15 @@ export default {
   watch: {
     page() {
       // ページの切り替えをトリガーに次のコンテンツを取得しにいく
-      if (this.getNewsIdList[this.page][0] !== this.getNewsContentList[0].id) {
+      if (
+        this.getNewsIdList[this.page - 1][0] !== this.getNewsContentList[0].id
+      ) {
         this.$store.dispatch(
           "news/fetchContentsFromId",
-          this.getNewsIdList[this.page]
+          this.getNewsIdList[this.page - 1]
         );
         window.scrollTo(0, 0);
       }
-      // console.log(getContentLoadingState);
     }
   },
   head() {
@@ -129,25 +102,6 @@ export default {
   //   await store.dispatch("news/fetchNewsId", latest_news_id_url);
   // },
   methods: {
-    setWindowHeight() {
-      this.windowHeight = window.innerHeight;
-    },
-    setDocumentHeight() {
-      this.pageHeight = $(document).height();
-    },
-    scrollToBottom() {
-      this.pageHeight = $(document).height();
-      // console.log("pageHeight: ", this.pageHeight);
-      $("html,body").animate({ scrollTop: this.pageHeight }, "slow");
-    },
-    handleScroll() {
-      this.position = window.scrollY;
-      // console.log(
-      //   "position, pageHeight*2/3: ",
-      //   this.position,
-      //   (this.pageHeight * 2) / 3
-      // );
-    },
     toPostingArticle(link) {
       window.open(link, "_blank");
     },

@@ -9,6 +9,9 @@ export const getters = {
 export const mutations = {
   stashPageNo(state, number) {
     state.page = number;
-    console.log(number);
+    // console.log(number);
+  },
+  resetPageNo(state) {
+    state.page = 1;
   }
 };

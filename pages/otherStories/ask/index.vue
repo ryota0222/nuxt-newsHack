@@ -1,13 +1,6 @@
 <template>
   <v-container>
-    <h1 class="my-6 ml-4">
-      {{$route.params.id}}の記事一覧
-      <span
-        class="ml-6"
-        style="font-size: 1.2rem"
-      >(表示件数：{{getUserPostInfo.submitted.length > 100 ? getUserPostInfo.submitted.length+"件中100件" : getUserPostInfo.submitted.length+"件"}})</span>
-    </h1>
-    <p class="ml-4">ユーザー作成日: {{getUserPostInfo.created | formatDate }}</p>
+    <h1 class="my-6 ml-4">ASK一覧</h1>
     <!-- ローディング中 -->
     <div class="text-center d-flex flex-wrap" v-if="getNewsContentList.length === 0">
       <template v-for="(contents, i) in getPostNumberPerPage" link>
@@ -33,40 +26,23 @@
                   <span class="title">{{ contents.title || "no-title" }}</span>
                   <span style="font-size: 0.8rem;">{{contents.time | formatDate}}</span>
                 </v-card-title>
-                <v-card-text class="d-flex align-center">
-                  <span class="mr-1">Link:</span>
-                  <v-btn
-                    v-if="contents.url"
-                    @click.prevent.stop="toPostingArticle(contents.url)"
-                    text
-                    color="link"
-                    min-height="20"
-                    class="x-small post-link align-center py-1 px-2"
-                  >
-                    <span class="text-left">{{contents.url}}</span>
-                  </v-btn>
-                  <span v-else>no-link</span>
-                </v-card-text>
               </v-card>
             </div>
           </v-hover>
         </v-col>
       </template>
-      <v-pagination
-        v-model="page"
-        class="my-4"
-        :length="getUserPostIdList.length"
-        total-visible="5"
-      ></v-pagination>
+      <v-pagination v-model="page" class="my-4" :length="getNewsIdList.length" total-visible="10"></v-pagination>
     </div>
     <!-- ページ最下部に移動するボタン -->
     <page-scroll-button></page-scroll-button>
   </v-container>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import PageScrollButton from "~/components/PageScrollButton";
 export default {
+  layout: "otherStoriesLayout",
   components: {
     PageScrollButton
   },
@@ -78,39 +54,36 @@ export default {
   created() {
     // ページを離れる前のページネーションを取得
     this.page = this.getPageNo;
-    // API
-    // ユーザー別一覧のIDを取得する
-    const user_posting_url =
-      "https://hacker-news.firebaseio.com/v0/user/" +
-      this.$route.params.id +
-      ".json?print=pretty";
     if (this.getNewsContentList.length === 0) {
-      this.$store.dispatch("news/fetchUserPosting", user_posting_url);
+      this.$store.dispatch("news/fetchContentFromAPI", "ASK");
     }
   },
   computed: {
     ...mapGetters(["getPageNo"]),
     ...mapGetters("news", [
-      "getUserPostInfo",
       "getNewsContentList",
-      "getPostNumberPerPage",
-      "getUserPostIdList"
+      "getNewsIdList",
+      "getPostNumberPerPage"
     ])
   },
   watch: {
     page() {
       // ページの切り替えをトリガーに次のコンテンツを取得しにいく
       if (
-        this.getUserPostIdList[this.page - 1][0] !==
-        this.getNewsContentList[0].id
+        this.getNewsIdList[this.page - 1][0] !== this.getNewsContentList[0].id
       ) {
         this.$store.dispatch(
           "news/fetchContentsFromId",
-          this.getUserPostIdList[this.page - 1]
+          this.getNewsIdList[this.page - 1]
         );
         window.scrollTo(0, 0);
       }
     }
+  },
+  head() {
+    return {
+      title: "ASK一覧"
+    };
   },
   methods: {
     toPostingArticle(link) {
@@ -120,11 +93,6 @@ export default {
       this.$store.commit("stashPageNo", this.page);
       this.$router.push({ name: "item-id", params: { id: contentsId } });
     }
-  },
-  head() {
-    return {
-      title: "ユーザー別記事一覧"
-    };
   },
   filters: {
     formatDate(unixTime) {
