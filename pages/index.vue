@@ -120,7 +120,7 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .card-wrapper {
   height: 100%;
   &:hover {
@@ -130,8 +130,6 @@ export default {
     height: 100%;
   }
 }
-</style>
-<style lang="scss">
 .post-link {
   display: inline-block;
   word-break: break-all;

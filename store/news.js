@@ -24,7 +24,6 @@ export const state = () => ({
       name: "Ask, Show and Job Stories",
       link: "/otherStories/ask",
       api: ""
-
     }
   ],
   otherStoriesCategory: [
@@ -92,16 +91,14 @@ export const mutations = {
     state.userPostIdList = list;
   },
   filterPostTypeApi(state, type) {
-    let selectedApiInfo = state.category.filter(list =>
-      list.name === type
-    )[0];
+    let selectedApiInfo = state.category.filter(list => list.name === type)[0];
     if (undefined === selectedApiInfo) {
-      selectedApiInfo = state.otherStoriesCategory.filter(list =>
-        list.name === type
+      selectedApiInfo = state.otherStoriesCategory.filter(
+        list => list.name === type
       )[0];
     }
     // console.log("selectedApiInfo: ", selectedApiInfo.api)
-    state.selectedApiInfo = selectedApiInfo
+    state.selectedApiInfo = selectedApiInfo;
   }
 };
 
@@ -109,7 +106,7 @@ export const actions = {
   // ニュース情報を取得する
   async fetchContentFromAPI({ dispatch, commit, state }, type) {
     // typeと合ったURLを取得
-    commit("filterPostTypeApi", type)
+    commit("filterPostTypeApi", type);
     // IDの取得
     const idList = await dispatch("fetchIdFromAPI", state.selectedApiInfo.api);
     // console.log("idList: ", idList);
@@ -123,6 +120,7 @@ export const actions = {
   async fetchUserPosting({ dispatch, commit, state }, url) {
     // ユーザー情報の取得
     const userPostInfo = await dispatch("fetchIdFromAPI", url);
+    console.log(userPostInfo);
     commit("setUserPostInfo", userPostInfo);
     // IDの取得
     const userPostIdList = userPostInfo.submitted;
