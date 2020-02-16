@@ -104,26 +104,3 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-.card-wrapper {
-  height: 100%;
-  &:hover {
-    cursor: pointer;
-  }
-  .v-card {
-    height: 100%;
-  }
-}
-</style>
-<style lang="scss">
-.post-link {
-  display: inline-block;
-  word-break: break-all;
-  padding: 2px 8px;
-  border-radius: 5px;
-  text-transform: none !important;
-  white-space: normal;
-  max-width: calc(100% - 30px);
-  height: inherit !important;
-}
-</style>
