@@ -80,7 +80,6 @@ export default {
     };
   },
   created() {
-    console.log(this.getUserPostInfo.submmited);
     // ページを離れる前のページネーションを取得
     this.page = this.getPageNo;
     // API
