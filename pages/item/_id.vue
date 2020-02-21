@@ -32,7 +32,6 @@
         <v-btn
           :href="getNewsContent.url"
           text
-          link
           color="link"
           min-height="20"
           class="x-small post-link align-center py-1 px-2"
