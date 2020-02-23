@@ -4,7 +4,7 @@
       <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
       <v-toolbar-title
         class="font-weight-black title-color"
-        :class="{titleDarkColor: darkMode === true}"
+        :class="{titleDarkColor: this.$vuetify.theme.dark === true}"
       >
         <span style="color: #ff4d61">H</span>acker News Clone
       </v-toolbar-title>
@@ -12,8 +12,8 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn @click="changeTheme" text min-width="40" min-height="40" v-on="on">
-            <LightModeSvg v-if="darkMode === true" alt="ライトモードに切替" class="btn-img-size" />
-            <DarkModeSvg v-if="darkMode === false" alt="ダークモードに切替" class="btn-img-size" />
+            <LightModeSvg v-if="darkMode === true" alt="ライトモードに切替" class="btn-img-size"/>
+            <DarkModeSvg v-if="darkMode === false" alt="ダークモードに切替" class="btn-img-size"/>
           </v-btn>
         </template>
         <span>{{darkMode ? "ライトモードに切替" : "ダークモードに切り替え"}}</span>
@@ -37,7 +37,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <nuxt />
+    <nuxt/>
   </v-app>
 </template>
 

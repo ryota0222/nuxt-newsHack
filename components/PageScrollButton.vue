@@ -43,7 +43,6 @@ export default {
     },
     scrollToBottom() {
       this.pageHeight = $(document).height();
-      // console.log("pageHeight: ", this.pageHeight);
       $("html,body").animate({ scrollTop: this.pageHeight }, "slow");
     },
     handleScroll() {
