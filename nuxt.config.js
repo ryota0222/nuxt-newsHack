@@ -5,9 +5,9 @@ module.exports = {
   /*
    ** Headers of the page
    */
-  server: {
-    port: 8000 // デフォルト: 3000
-  },
+  // server: {
+  //   port: 8000 // デフォルト: 3000
+  // },
   head: {
     titleTemplate: "%s - " + process.env.npm_package_name,
     // title: process.env.npm_package_name || "",
