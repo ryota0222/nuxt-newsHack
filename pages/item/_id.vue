@@ -36,11 +36,10 @@
         <v-btn
           :href="getNewsContent.url"
           text
-          link
           color="link"
           min-height="20"
-          class="x-small post-link align-center d-flex"
-          style="max-width: calc(100% - 50px);"
+          class="x-small post-link align-center py-1 px-2"
+          style="max-width: calc(100% - 50px); !important"
         >
           <span class="text-left">{{getNewsContent.url}}</span>
         </v-btn>

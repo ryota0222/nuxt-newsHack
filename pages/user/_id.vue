@@ -5,9 +5,13 @@
       <span
         class="ml-6"
         style="font-size: 1.2rem"
+        v-if="this.isEmpty(getUserPostInfo) !== true"
       >(表示件数：{{getUserPostInfo.submitted.length > 100 ? getUserPostInfo.submitted.length+"件中100件" : getUserPostInfo.submitted.length+"件"}})</span>
     </h1>
-    <p class="ml-4">ユーザー作成日: {{getUserPostInfo.created | formatDate }}</p>
+    <p
+      class="ml-4"
+      v-if="this.isEmpty(getUserPostInfo) !== true"
+    >ユーザー作成日: {{getUserPostInfo.created | formatDate }}</p>
     <!-- ローディング中 -->
     <div class="text-center d-flex flex-wrap" v-if="getNewsContentList.length === 0">
       <template v-for="(contents, i) in getPostNumberPerPage" link>
@@ -122,6 +126,9 @@ export default {
     toContentDetail(contentsId) {
       this.$store.commit("stashPageNo", this.page);
       this.$router.push({ name: "item-id", params: { id: contentsId } });
+    },
+    isEmpty(obj) {
+      return !Object.keys(obj).length;
     }
   },
   head() {
@@ -139,26 +146,3 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-.card-wrapper {
-  height: 100%;
-  &:hover {
-    cursor: pointer;
-  }
-  .v-card {
-    height: 100%;
-  }
-}
-</style>
-<style lang="scss">
-.post-link {
-  display: inline-block;
-  word-break: break-all;
-  padding: 2px 8px;
-  border-radius: 5px;
-  text-transform: none !important;
-  white-space: normal;
-  max-width: calc(100% - 30px);
-  height: inherit !important;
-}
-</style>

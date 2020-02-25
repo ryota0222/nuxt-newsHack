@@ -24,7 +24,6 @@ export const state = () => ({
       name: "Ask, Show and Job Stories",
       link: "/otherStories/ask",
       api: ""
-
     }
   ],
   otherStoriesCategory: [
@@ -80,7 +79,6 @@ export const mutations = {
     state.newsContent = state.newsContentList.filter(
       content => content.id === id
     )[0];
-    // console.log(state.newsContent);
   },
   clearNewsContentList(state) {
     state.newsContentList = [];
@@ -92,16 +90,13 @@ export const mutations = {
     state.userPostIdList = list;
   },
   filterPostTypeApi(state, type) {
-    let selectedApiInfo = state.category.filter(list =>
-      list.name === type
-    )[0];
+    let selectedApiInfo = state.category.filter(list => list.name === type)[0];
     if (undefined === selectedApiInfo) {
-      selectedApiInfo = state.otherStoriesCategory.filter(list =>
-        list.name === type
+      selectedApiInfo = state.otherStoriesCategory.filter(
+        list => list.name === type
       )[0];
     }
-    // console.log("selectedApiInfo: ", selectedApiInfo.api)
-    state.selectedApiInfo = selectedApiInfo
+    state.selectedApiInfo = selectedApiInfo;
   }
 };
 
@@ -109,14 +104,12 @@ export const actions = {
   // ニュース情報を取得する
   async fetchContentFromAPI({ dispatch, commit, state }, type) {
     // typeと合ったURLを取得
-    commit("filterPostTypeApi", type)
+    commit("filterPostTypeApi", type);
     // IDの取得
     const idList = await dispatch("fetchIdFromAPI", state.selectedApiInfo.api);
-    // console.log("idList: ", idList);
     // 1ページに表示する数に分け、
     // 最初のページに表示するIDはコンテンツも取得する
     const sliceIdList = await dispatch("sliceIdList", idList);
-    // console.log("slice: ", sliceIdList)
     commit("setNewsIdList", sliceIdList);
   },
   // ユーザー別のニュース情報を取得する
@@ -137,7 +130,6 @@ export const actions = {
   },
   // IDを取得する
   async fetchIdFromAPI({ dispatch, commit, state }, url) {
-    // console.log(state.selectedApiInfo.api);
     return await this.$axios.$get(url);
   },
   async fetchNewsContentFromAPI({ dispatch, commit }, url) {
@@ -145,7 +137,6 @@ export const actions = {
   },
   // 1ページに表示する数に分ける
   async sliceIdList({ dispatch, commit, state }, list) {
-    // console.log(list)
     const originalList = list;
     const repeatNum = Math.ceil(list.length / state.postNumberPerPage);
     let sliceIdList = [];
@@ -171,6 +162,5 @@ export const actions = {
       if (newsContent !== null) newsContentList.push(newsContent);
     }
     commit("setContentList", newsContentList);
-    // console.log(state.newsContentList[0]);
   }
 };
