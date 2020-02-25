@@ -95,7 +95,7 @@ export default {
   },
   head() {
     return {
-      title: "最新記事一覧"
+      title: "ベスト記事一覧"
     };
   },
   methods: {

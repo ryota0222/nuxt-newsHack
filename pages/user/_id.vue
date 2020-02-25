@@ -30,7 +30,10 @@
                 class="d-flex flex-column justify-space-between"
               >
                 <v-card-title class="pb-0 d-flex flex-column align-start">
-                  <span class="title">{{ contents.title || "no-title" }}</span>
+                  <span class="title" v-if="contents.title">{{ contents.title }}</span>
+                  <span class="title" v-else-if="contents.type === 'comment'">{{ "comment" }}</span>
+                  <span class="title" v-else-if="contents.deleted">この投稿は削除されました。</span>
+                  <span class="title" v-else>{{ 'no-title' }}</span>
                   <span style="font-size: 0.8rem;">{{contents.time | formatDate}}</span>
                 </v-card-title>
                 <v-card-text class="d-flex align-center">

@@ -18,9 +18,13 @@
         </v-btn>
       </v-card-subtitle>
       <v-card-subtitle class="py-1">ジャンル: {{getNewsContent.type}}</v-card-subtitle>
-      <v-card-text class="py-1">テキスト: {{getNewsContent.text || "no-text"}}</v-card-text>
+      <v-card-text class="py-1">
+        テキスト:
+        <div v-html="getNewsContent.text" v-if="getNewsContent.text"></div>
+        <span v-else>no-text</span>
+      </v-card-text>
       <v-card-text class="py-1">コメント数: {{getNewsContent.descendants || "0"}}</v-card-text>
-      <v-card-text class="py-1">スコア: {{getNewsContent.score || "no-score"}}</v-card-text>
+      <v-card-text class="py-1">スコア: {{getNewsContent.score || "0"}}</v-card-text>
 
       <!-- <v-card-text class="pb-3 pt-1">
         リンク:
