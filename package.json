@@ -15,7 +15,7 @@
     "@nuxtjs/axios": "^5.9.5",
     "axios": "^0.19.2",
     "cross-env": "^5.2.0",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "jquery": "^3.4.1",
     "nuxt": "^2.0.0",
     "nuxt-svg-loader": "^1.2.0"
